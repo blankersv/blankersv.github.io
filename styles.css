@@ -22,8 +22,8 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
 	margin: 0;
@@ -34,11 +34,12 @@ time, mark, audio, video {
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
+article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
-a{
+
+a {
 	text-decoration: none;
 	text-transform: none;
 	color: #8496b3;
@@ -47,39 +48,44 @@ a{
 body {
 	line-height: 1;
 	font-family: lato, ubuntu,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
-	text-rendering : optimizeLegibility;
-	-webkit-font-smoothing : antialiased;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
 	font-size: 19px;
 	background-color: #222930;
 	color: #d5d5d5;
 }
+
 ol, ul {
 	list-style: none;
 }
+
 blockquote, q {
 	quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
+
+	blockquote:before, blockquote:after,
+	q:before, q:after {
+		content: '';
+		content: none;
+	}
+
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
 
 p {
-	color: #15171a;
-	font-size: 17;
-	line-height: 31px;
+	color: #d5d5d5;
+	font-size: 16px;
+	line-height: 1.75;
+	margin: 0 auto 2em;
 }
 
 strong {
 	font-weight: 600;
 }
 
-div , footer {
+div, footer {
 	box-sizing: border-box;
 }
 
@@ -95,14 +101,15 @@ div , footer {
 }
 
 .hero {
-	margin: 50px auto; 
+	margin: 50px auto;
 	position: relative;
+	text-align: center;
 }
 
 h1.name {
-	font-size: 70px;
-	font-weight: 300;
 	display: inline-block;
+	font-size: 2.25em;
+	line-height: 1 !important;
 }
 
 .job-title {
@@ -153,35 +160,35 @@ h1.name {
 	margin: 30px 0;
 }
 
-.list-card .exp , .list-card div{
-	display: inline-block;
-	vertical-align: top;
-}
+	.list-card .exp, .list-card div {
+		display: inline-block;
+		vertical-align: top;
+	}
 
-.list-card .exp {
-	margin-right: 15px;
-	color: #4A90E2;
-	font-weight: 600;
-	width: 100px;
-}
+	.list-card .exp {
+		margin-right: 15px;
+		color: #d5d5d5;
+		font-weight: 600;
+		width: 100px;
+	}
 
-.list-card div {
-	width: 70%;
-}
+	.list-card div {
+		width: 90%;
+	}
 
-.list-card h3 {
-	font-size: 20px;
-	font-weight: 600;
-	color: #5B6A9A;
-	line-height: 26px;
-	margin-bottom: 8px;
-}
+	.list-card h3 {
+		font-size: 20px;
+		font-weight: 600;
+		color: #d5d5d5;
+		line-height: 26px;
+		margin-bottom: 8px;
+	}
 
-.list-card div span {
-	font-size: 16px;
-	color: #81899C;
-	line-height: 22px;
-}
+	.list-card div span {
+		font-size: 16px;
+		color: #d5d5d5;
+		line-height: 22px;
+	}
 
 /*skill and intrests ends*/
 
@@ -206,13 +213,13 @@ h1.name {
 	padding-top: 50px
 }
 
-.card-active , .card:hover{
-	transform: scale(1.02);
-	transition: 0.5s;
-	background-color: #fff;
-	box-shadow: 0px 5px 50px -8px #ddd;
-	cursor: pointer;
-}
+	.card-active, .card:hover {
+		transform: scale(1.02);
+		transition: 0.5s;
+		background-color: #fff;
+		box-shadow: 0px 5px 50px -8px #ddd;
+		cursor: pointer;
+	}
 
 
 .skill-level {
@@ -220,21 +227,21 @@ h1.name {
 	max-width: 160px;
 }
 
-.skill-level span {
-	font-size: 35px;
-	font-weight: 300;
-	color: #5B6A9A;
-	vertical-align: top;
-}
+	.skill-level span {
+		font-size: 35px;
+		font-weight: 300;
+		color: #5B6A9A;
+		vertical-align: top;
+	}
 
-.skill-level h2 {
-	font-size: 95px;
-	font-weight: 300;
-	display: inline-block;
-	vertical-align: top;
-	color: #5B6A9A;
-	letter-spacing: -5px;
-}
+	.skill-level h2 {
+		font-size: 95px;
+		font-weight: 300;
+		display: inline-block;
+		vertical-align: top;
+		color: #5B6A9A;
+		letter-spacing: -5px;
+	}
 
 .skill-meta {
 	vertical-align: top;
@@ -245,18 +252,18 @@ h1.name {
 	margin-left: 15px;
 }
 
-.skill-meta h3 {
-	font-size: 20px;
-	font-weight: 800;
-	color: #5B6A9A;
-	margin-bottom: 5px;
-}
+	.skill-meta h3 {
+		font-size: 20px;
+		font-weight: 800;
+		color: #5B6A9A;
+		margin-bottom: 5px;
+	}
 
-.skill-meta span{
-	color: #81899C;
-	line-height: 20px;
-	font-size: 16px;
-}
+	.skill-meta span {
+		color: #81899C;
+		line-height: 20px;
+		font-size: 16px;
+	}
 
 /* Achievements ends */
 
@@ -271,29 +278,31 @@ ol {
 	margin: 100px 0;
 	height: 2px;
 	background: #EEF0F7;
+}
 
-}
-ol::before,
-ol::after {
-	content: "";
-	position: absolute;
-	top: -10px;
-	display: block;
-	width: 0;
-	height: 0;
-  	border-radius: 10px;
-	border: 0px solid #31708F;
-}
-ol::before {
-	left: -5px;
-}
-ol::after {
-	right: -10px;
-	border: 0px solid transparent;
-	border-right: 0;
-	border-left: 20px solid #31708F;
-  	border-radius: 3px;
-}
+	ol::before,
+	ol::after {
+		content: "";
+		position: absolute;
+		top: -10px;
+		display: block;
+		width: 0;
+		height: 0;
+		border-radius: 10px;
+		border: 0px solid #31708F;
+	}
+
+	ol::before {
+		left: -5px;
+	}
+
+	ol::after {
+		right: -10px;
+		border: 0px solid transparent;
+		border-right: 0;
+		border-left: 20px solid #31708F;
+		border-radius: 3px;
+	}
 
 /* ---- Timeline elements ---- */
 li {
@@ -301,55 +310,59 @@ li {
 	display: inline-block;
 	float: left;
 	width: 25%;
-  	height: 50px;
+	height: 50px;
 }
-li .line {
-  position: absolute;
-  top: -47px;
-  left: 1%;
-  font-size: 20px;
-  font-weight: 600;
-  color: #04143A;
-}
-li .point {
-	content: "";
-	top: -7px;
-	left: 0%;
-	display: block;
-	width: 8px;
-	height: 8px;
-	border: 4px solid #fff;
-	border-radius: 10px;
-	background: #4A90E2;
-  position: absolute;
-}
-li .description {
-  display: none;
-  padding: 10px 0;
-  margin-top: 20px;
-  position: relative;
-  font-weight: normal;
-  z-index: 1;
-  max-width: 95%;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 25px;
-  color: #5B6A9A;
-}
+
+	li .line {
+		position: absolute;
+		top: -47px;
+		left: 1%;
+		font-size: 20px;
+		font-weight: 600;
+		color: #04143A;
+	}
+
+	li .point {
+		content: "";
+		top: -7px;
+		left: 0%;
+		display: block;
+		width: 8px;
+		height: 8px;
+		border: 4px solid #fff;
+		border-radius: 10px;
+		background: #4A90E2;
+		position: absolute;
+	}
+
+	li .description {
+		display: none;
+		padding: 10px 0;
+		margin-top: 20px;
+		position: relative;
+		font-weight: normal;
+		z-index: 1;
+		max-width: 95%;
+		font-size: 18px;
+		font-weight: 600;
+		line-height: 25px;
+		color: #5B6A9A;
+	}
+
 .description::before {
-  content: '';
-  width: 0; 
-  height: 0; 
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 5px solid #f4f4f4;
-  position: absolute;
-  top: -5px;
-  left: 43%;
+	content: '';
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-bottom: 5px solid #f4f4f4;
+	position: absolute;
+	top: -5px;
+	left: 43%;
 }
 
 
-.timeline .date{
+.timeline .date {
 	font-size: 14px;
 	color: #81899C;
 	font-weight: 300;
@@ -357,10 +370,11 @@ li .description {
 
 /* ---- Hover effects ---- */
 li:hover {
-  color: #48A4D2;
+	color: #48A4D2;
 }
+
 li .description {
-  display: block;
+	display: block;
 }
 
 /*timeline ends*/
@@ -369,21 +383,23 @@ li .description {
 
 /* Media queries*/
 
-@media(max-width: 1024px){
+@media(max-width: 1024px) {
 	.container {
 		padding: 15px;
 		margin: 0px auto;
 	}
+
 	.cards {
 		margin-top: 250px;
 	}
 }
 
-@media(max-width: 768px){
+@media(max-width: 768px) {
 	.container {
 		padding: 15px;
 		margin: 0px auto;
 	}
+
 	.cards {
 		margin-top: 320px;
 	}
@@ -392,25 +408,27 @@ li .description {
 		padding: 15px;
 		text-align: left;
 	}
-	.card h2 {
-		font-size: 70px;
-	}
-		.card , .sections {
+
+		.card h2 {
+			font-size: 70px;
+		}
+
+	.card, .sections {
 		width: 100%;
 		height: auto;
 		margin: 10px 0;
 		float: left;
 	}
 
-	.timeline{
+	.timeline {
 		border: none;
 		background-color: rgba(0,0,0,0);
 	}
 
-	.timeline li{
-		margin-top: 70px;
-		height: 150px;
-	}
+		.timeline li {
+			margin-top: 70px;
+			height: 150px;
+		}
 }
 
 
@@ -419,16 +437,16 @@ li .description {
 		font-size: 40px;
 	}
 
-	.card , .sections {
+	.card, .sections {
 		width: 100%;
 		height: auto;
 		margin: 10px 0;
 		float: left;
 	}
 
-	.timeline{
+	.timeline {
 		display: none;
-		}
+	}
 
 	.job-title {
 		position: absolute;
@@ -443,14 +461,16 @@ li .description {
 		font-size: 20px;
 		line-height: 28px;
 	}
+
 	.container {
 		margin: 0px;
 		padding: 0 15px;
 	}
+
 	footer {
 		margin-top: 2050px;
 	}
-	}
+}
 
 
 /* End of all :P*/
