@@ -93,7 +93,8 @@ footer, header, hgroup, menu, nav, section {
 a {
 	text-decoration: none;
 	text-transform: none;
-	color: #8496b3;
+	/*color: #8496b3;*/
+	color: #5477b0;
 }
 
 body {
@@ -109,10 +110,6 @@ body {
 .dark-mode{
 	background-color: #d5d5d5;
 	color: #222930;
-	a {
-		/*color: #4771b5;*/
-		color: red;
-	}
 }
 
 #border {
