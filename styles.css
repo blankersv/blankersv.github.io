@@ -108,6 +108,9 @@ body {
 .dark-mode{
 	background-color: #d5d5d5;
 	color: #222930;
+	a {
+		color: #4771b5
+	}
 }
 
 #border {
