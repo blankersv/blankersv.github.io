@@ -89,11 +89,7 @@ footer, header, hgroup, menu, nav, section {
 		text-align: center !important;
 	}
 
-a {
-	text-decoration: none;
-	text-transform: none;
-	color: #8496b3;
-}
+
 
 body {
 	line-height: 1;
@@ -103,6 +99,12 @@ body {
 	font-size: 19px;
 	background-color: #222930;
 	color: #d5d5d5;
+
+	a {
+	text-decoration: none;
+	text-transform: none;
+	color: #8496b3;
+	}
 }
 
 .dark-mode{
