@@ -105,6 +105,11 @@ body {
 	color: #d5d5d5;
 }
 
+.dark-mode{
+	background-color: #d5d5d5;
+	color: #222930;
+}
+
 #border {
 	border-style: solid;
 	border-width: 1px;
@@ -129,7 +134,7 @@ ol, ul {
 }
 
 li:before {
-	/*content:"·";
+	/*content:"Â·";
     font-size:50px;
     vertical-align:middle;
     line-height:20px;*/
