@@ -248,7 +248,7 @@ h1.name {
 
 	.list-card .exp {
 		margin-right: 15px;
-		color: #d5d5d5;
+		/*color: #d5d5d5;*/
 		font-weight: 600;
 		width: 100px;
 	}
@@ -260,14 +260,14 @@ h1.name {
 	.list-card h3 {
 		font-size: 20px;
 		font-weight: 600;
-		color: #d5d5d5;
+		/*color: #d5d5d5;*/
 		line-height: 26px;
 		margin-bottom: 8px;
 	}
 
 	.list-card div span {
 		font-size: 17px;
-		color: #d5d5d5;
+		/*color: #d5d5d5;*/
 		line-height: 22px;
 	}
 
@@ -282,7 +282,7 @@ h1.name {
 
 	.wide-list-card .exp {
 		margin-right: 15px;
-		color: #d5d5d5;
+		/*color: #d5d5d5;*/
 		font-weight: 600;
 		width: 100px;
 	}
@@ -294,14 +294,14 @@ h1.name {
 	.wide-list-card h3 {
 		font-size: 20px;
 		font-weight: 600;
-		color: #d5d5d5;
+		/*color: #d5d5d5;*/
 		line-height: 26px;
 		margin-bottom: 8px;
 	}
 
 	.wide-list-card div span {
 		font-size: 17px;
-		color: #d5d5d5;
+		/*color: #d5d5d5;*/
 		line-height: 22px;
 	}
 
