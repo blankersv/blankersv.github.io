@@ -103,8 +103,8 @@ body {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	font-size: 19px;
-	background-color: #222930;
-	color: #d5d5d5;
+	background-color: #d4ddd0;
+	color: #1f413d;
 }
 
 .dark-mode{
