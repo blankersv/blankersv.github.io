@@ -98,6 +98,10 @@ a.body{
 	color: #b16f32;
 }
 
+a:hover{
+	color: #b16f32;
+}
+
 body {
 	line-height: 1;
 	font-family: Mrs Eaves Roman Small Caps;
