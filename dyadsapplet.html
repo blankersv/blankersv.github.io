@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Two-note chords on a Möbius strip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAFAFA; --fg:#23373B; --muted:#5B6D70; --bar:#23373B; --bar-fg:#FAFAFA;
+  --accent:#EB811B; --red:#D7263D; --blue:#1B4F9C;
+  --domA:rgba(235,129,27,.12); --domB:rgba(123,63,160,.10);
+  --grid:rgba(35,55,59,.10); --dot:#8B979A; --surf:#F4CDA3; --panel:#FFFFFF; --rule:#DDE2E3;
+  --on-accent:#FFFFFF;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#182326; --fg:#E7EDEE; --muted:#A2B2B5; --bar:#23373B; --bar-fg:#FAFAFA;
+    --accent:#F29A45; --red:#FF6474; --blue:#7FA9FF;
+    --domA:rgba(242,154,69,.13); --domB:rgba(178,128,220,.12);
+    --grid:rgba(231,237,238,.09); --dot:#8E9FA2; --surf:#C9925F; --panel:#1F2E32; --rule:#33474C;
+    --on-accent:#1A1A1A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#182326; --fg:#E7EDEE; --muted:#A2B2B5; --bar:#23373B; --bar-fg:#FAFAFA;
+  --accent:#F29A45; --red:#FF6474; --blue:#7FA9FF;
+  --domA:rgba(242,154,69,.13); --domB:rgba(178,128,220,.12);
+  --grid:rgba(231,237,238,.09); --dot:#8E9FA2; --surf:#C9925F; --panel:#1F2E32; --rule:#33474C;
+  --on-accent:#1A1A1A;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;background:var(--bg);color:var(--fg);
+  font-family:"Fira Sans","Source Sans 3","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-weight:400;line-height:1.45;-webkit-font-smoothing:antialiased;
+}
+.bar{background:var(--bar);color:var(--bar-fg);padding:14px 28px 13px;position:relative}
+.bar::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:26%;background:var(--accent)}
+.bar h1{margin:0;font-weight:500;font-size:clamp(1.3rem,2.5vw,1.95rem);letter-spacing:-.005em}
+main{
+  max-width:1440px;margin:0 auto;padding:18px 24px 36px;
+  display:grid;gap:18px 22px;
+  grid-template-columns:minmax(0,3fr) minmax(0,2fr);
+  grid-template-areas:"flat strip" "readout controls";
+  align-items:start;
+}
+@media (max-width:880px){
+  main{grid-template-columns:minmax(0,1fr);grid-template-areas:"flat" "strip" "readout" "controls";padding:14px 14px 28px}
+  .bar{padding:12px 16px}
+}
+.panel{margin:0;background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:10px 10px 12px}
+.flat{grid-area:flat}.strip{grid-area:strip}.readout{grid-area:readout}.controls{grid-area:controls}
+canvas{display:block;width:100%;touch-action:none;border-radius:3px}
+canvas:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+figcaption{font-size:.92rem;color:var(--muted);margin:8px 4px 0;max-width:68ch}
+figcaption .keys{display:block;margin-top:4px;font-size:.86rem}
+kbd{font-family:inherit;font-size:.85em;border:1px solid var(--rule);border-bottom-width:2px;border-radius:3px;padding:0 .35em;color:var(--fg)}
+.readout{padding:4px 4px 0}
+.chord{font-size:clamp(2.6rem,5.4vw,4rem);font-weight:600;line-height:1.02;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.interval{font-size:clamp(1.1rem,1.8vw,1.4rem);margin-top:4px}
+.readout dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:14px 0 0;font-size:.98rem}
+.readout dt{color:var(--muted)}
+.readout dd{margin:0;font-variant-numeric:tabular-nums}
+.controls h2{font-size:1.05rem;font-weight:500;margin:2px 0 8px}
+.tours{display:flex;flex-wrap:wrap;gap:8px}
+button{
+  font:inherit;font-size:.98rem;color:var(--fg);background:transparent;
+  border:1.5px solid var(--fg);border-radius:4px;padding:.5em .9em;cursor:pointer;
+}
+button:hover{background:var(--domA)}
+button[aria-pressed="true"],button.active{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.caption{min-height:4.4em;margin:12px 0 14px;padding-left:12px;border-left:3px solid var(--accent);max-width:62ch}
+.options{display:grid;gap:8px;font-size:.96rem}
+.options label{display:flex;align-items:center;gap:10px;cursor:pointer}
+.options input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)}
+.options input[type=range]{width:180px;accent-color:var(--accent)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="bar"><h1>Two-note chords live on a Möbius strip</h1></header>
+<main>
+  <figure class="panel flat">
+    <canvas id="flat" tabindex="0" role="img" aria-label="The square of two-note chords. Horizontal coordinate s is the sum of the notes, vertical coordinate d is the distance between them. Click a dot to hear a chord, or drag to glide."></canvas>
+    <figcaption>Click a dot to hear that chord, or drag to glide through the chords in between. Across: <i>s</i>, the sum of the two notes. Up: <i>d</i>, the distance between them. The left and right edges are glued with a flip.
+      <span class="keys">With the map selected: <kbd>←</kbd> <kbd>→</kbd> move both notes, <kbd>↑</kbd> <kbd>↓</kbd> move the top note, <kbd>space</kbd> plays again.</span>
+    </figcaption>
+  </figure>
+
+  <figure class="panel strip">
+    <canvas id="strip" role="img" aria-label="The same square glued into a Möbius strip in 3D. Drag to turn it; click a dot to hear it."></canvas>
+    <figcaption>The same square, glued up. Red: the unisons, which form the single edge of the strip. Blue: the tritones, around the middle. Drag to turn it.</figcaption>
+  </figure>
+
+  <section class="readout" aria-live="polite">
+    <div class="chord" id="chordName">C–E</div>
+    <div class="interval" id="intervalName">a major third</div>
+    <dl>
+      <dt>Sounding</dt><dd id="sounding">C4 and E4</dd>
+      <dt>In the square</dt><dd id="coords"><i>s</i> = 4, <i>d</i> = 4</dd>
+    </dl>
+  </section>
+
+  <section class="controls">
+    <h2>Tours</h2>
+    <div class="tours">
+      <button type="button" data-tour="around">Go once around</button>
+      <button type="button" data-tour="mirror">Bounce off the mirror</button>
+      <button type="button" data-tour="tritone">Walk the tritone circle</button>
+      <button type="button" id="stop">Stop</button>
+    </div>
+    <p class="caption" id="caption">Each tour moves the chord one small step at a time. Watch where the dot goes when it reaches an edge.</p>
+    <div class="options">
+      <div class="row"><button type="button" id="cover" aria-pressed="false">Show a second copy of the square</button></div>
+      <label><input type="checkbox" id="snap"> Snap the glide to the twelve notes</label>
+      <label><input type="checkbox" id="arp"> Play the notes one at a time first</label>
+      <label><input type="checkbox" id="spin"> Turn the strip slowly on its own</label>
+      <label>Volume <input type="range" id="vol" min="0" max="1" step="0.01" value="0.6"></label>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+'use strict';
+const NAMES = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+const IV = ['unison','minor second','major second','minor third','major third','perfect fourth','tritone','perfect fifth','minor sixth','major sixth','minor seventh','major seventh','octave'];
+const IVS = ['unison','m2','M2','m3','M3','P4','tritone','P5','m6','M6','m7','M7','unison'];
+const FONT = '"Fira Sans","Source Sans 3","Segoe UI",system-ui,sans-serif';
+const mod = (a,n) => ((a % n) + n) % n;
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const near = v => Math.abs(v - Math.round(v)) < 0.02;
+const fmt = v => near(v) ? String(Math.round(v)) : v.toFixed(2);
+const article = w => (w === 'octave' ? 'an' : 'a');
+
+/* Reduce a lift (x,y) of a dyad to its point (s,d) in the square [0,12) x [0,12].
+   Identifications: swap x,y; move either note by 12; (s,d) ~ (s+12, 12-d). */
+function reduce(x, y) {
+  let a = Math.min(x, y), b = Math.max(x, y);
+  b -= 12 * Math.floor((b - a) / 12 + 1e-9);
+  let s = a + b, d = b - a;
+  s -= 24 * Math.floor(s / 24 + 1e-9);
+  if (s >= 12 - 1e-9) { s -= 12; d = 12 - d; }
+  if (s < 0) s = 0;
+  return { s, d };
+}
+const liftOf = (s, d) => ({ x: (s - d) / 2, y: (s + d) / 2 });
+const dotName = (s, d) => { const l = liftOf(s, d); return NAMES[mod(Math.round(l.x),12)] + '–' + NAMES[mod(Math.round(l.y),12)]; };
+
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const state = { x:0, y:4, cover:false, snap:false, arp:false, vol:0.6, spin:!reduceMotion,
+  trail:[], tour:null, hover:null, yaw:0.55, pitch:0.72, pauseSpinUntil:0, dirty:true };
+
+/* ---------------- colors ---------------- */
+const C = {};
+function hexRGB(h){ h = h.replace('#','').trim(); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h,16); return [(n>>16)&255,(n>>8)&255,n&255]; }
+function readColors(){
+  const cs = getComputedStyle(document.documentElement);
+  ['bg','fg','muted','accent','red','blue','domA','domB','grid','dot','surf','panel'].forEach(k => C[k] = cs.getPropertyValue('--' + k).trim());
+  C.surfRGB = hexRGB(C.surf);
+  state.dirty = true;
+}
+readColors();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readColors);
+new MutationObserver(readColors).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+
+/* ---------------- audio ---------------- */
+const audio = {
+  ctx:null, master:null, sus:null,
+  init(){
+    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    this.ctx = new AC();
+    this.master = this.ctx.createGain(); this.master.gain.value = state.vol * 0.35;
+    const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2800;
+    this.master.connect(lp); lp.connect(this.ctx.destination);
+  },
+  hz: m => 440 * Math.pow(2, (m - 69) / 12),
+  strike(m, t0, dur){
+    const c = this.ctx, f = this.hz(m);
+    const o = c.createOscillator(); o.type = 'triangle'; o.frequency.value = f;
+    const o2 = c.createOscillator(); o2.type = 'sine'; o2.frequency.value = 2 * f;
+    const g = c.createGain(), g2 = c.createGain(); g2.gain.value = 0.18;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.5, t0 + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); o2.connect(g2); g2.connect(g); g.connect(this.master);
+    o.start(t0); o2.start(t0); o.stop(t0 + dur + 0.05); o2.stop(t0 + dur + 0.05);
+  },
+  chord(x, y){
+    this.init(); if (!this.ctx) return;
+    this.susStop();
+    const t = this.ctx.currentTime + 0.02, a = 60 + Math.min(x,y), b = 60 + Math.max(x,y);
+    if (state.arp) { this.strike(a,t,0.55); this.strike(b,t+0.4,0.55); this.strike(a,t+0.85,1.5); this.strike(b,t+0.85,1.5); }
+    else { this.strike(a,t,1.6); this.strike(b,t,1.6); }
+  },
+  susStart(x, y){
+    this.init(); if (!this.ctx) return;
+    this.susStop();
+    const c = this.ctx, g = c.createGain();
+    g.gain.setValueAtTime(0.0001, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.3, c.currentTime + 0.06);
+    g.connect(this.master);
+    const os = [x, y].map(v => { const o = c.createOscillator(); o.type = 'triangle'; o.frequency.value = this.hz(60 + v); o.connect(g); o.start(); return o; });
+    this.sus = { g, os };
+  },
+  susSet(x, y){
+    if (!this.sus) return;
+    const t = this.ctx.currentTime, tc = state.snap ? 0.004 : 0.015;
+    this.sus.os[0].frequency.setTargetAtTime(this.hz(60 + x), t, tc);
+    this.sus.os[1].frequency.setTargetAtTime(this.hz(60 + y), t, tc);
+  },
+  susStop(){
+    if (!this.sus) return;
+    const { g, os } = this.sus, t = this.ctx.currentTime;
+    g.gain.cancelScheduledValues(t);
+    g.gain.setTargetAtTime(0, t, 0.06);
+    os.forEach(o => o.stop(t + 0.4));
+    this.sus = null;
+  },
+  setVol(v){ if (this.master) this.master.gain.setTargetAtTime(v * 0.35, this.ctx.currentTime, 0.02); }
+};
+
+/* ---------------- readout ---------------- */
+const el = id => document.getElementById(id);
+function noteLabel(m){
+  const r = Math.round(m), c = Math.round((m - r) * 100);
+  const nm = NAMES[mod(r,12)] + (Math.floor(r / 12) - 1);
+  return c ? `${nm} ${c > 0 ? '+' : '−'}${Math.abs(c)}¢` : nm;
+}
+function updateReadout(){
+  const a = Math.min(state.x, state.y), b = Math.max(state.x, state.y), g = b - a;
+  const exact = near(a) && near(b);
+  el('chordName').textContent = (exact ? '' : '≈ ') + NAMES[mod(Math.round(a),12)] + '–' + NAMES[mod(Math.round(b),12)];
+  let iv;
+  if (near(g)) { const n = Math.round(g); iv = `${article(IV[n])} ${IV[n]} (${n} semitone${n === 1 ? '' : 's'})`; }
+  else { const lo = Math.floor(g), hi = Math.ceil(g); iv = `${g.toFixed(2)} semitones, between ${article(IV[lo])} ${IV[lo]} and ${article(IV[hi])} ${IV[hi]}`; }
+  el('intervalName').textContent = iv;
+  el('sounding').textContent = `${noteLabel(60 + a)} and ${noteLabel(60 + b)}`;
+  const h = reduce(state.x, state.y);
+  el('coords').innerHTML = `<i>s</i> = ${fmt(h.s)}, <i>d</i> = ${fmt(h.d)}`;
+}
+
+/* ---------------- flat map ---------------- */
+const flat = el('flat'), fctx = flat.getContext('2d');
+let L = {};
+function sizeFlat(){
+  const sMax = state.cover ? 24 : 12;
+  const cw = flat.clientWidth || 600;
+  const ml = 34, mr = 76, mt = 16, mb = state.cover ? 46 : 32;
+  const maxH = Math.max(260, Math.min(window.innerHeight * 0.62, 640));
+  const u = Math.max(8, Math.min((cw - ml - mr) / sMax, (maxH - mt - mb) / 12));
+  const h = Math.round(mt + mb + 12 * u), dpr = window.devicePixelRatio || 1;
+  flat.style.height = h + 'px';
+  flat.width = Math.round(cw * dpr); flat.height = Math.round(h * dpr);
+  L = { sMax, u, ox: ml + ((cw - ml - mr) - sMax * u) / 2, oy: mt, cw, h, dpr };
+  state.dirty = true;
+}
+const X = s => L.ox + s * L.u, Y = d => L.oy + (12 - d) * L.u;
+function seg(g, x1, y1, x2, y2){ g.beginPath(); g.moveTo(x1,y1); g.lineTo(x2,y2); g.stroke(); }
+function disc(g, x, y, r){ g.beginPath(); g.arc(x,y,r,0,2*Math.PI); g.fill(); }
+function arrowEdge(g, s, up){
+  const x = X(s);
+  seg(g, x, Y(0), x, Y(12));
+  const ym = Y(8.5), dir = up ? -1 : 1, a = Math.max(7, L.u * 0.32);
+  g.beginPath(); g.moveTo(x, ym + dir * a); g.lineTo(x - a * 0.6, ym - dir * a * 0.4); g.lineTo(x + a * 0.6, ym - dir * a * 0.4); g.closePath(); g.fill();
+}
+function pill(g, text, x, y){
+  g.font = `500 13px ${FONT}`;
+  const w = g.measureText(text).width + 12, h = 20;
+  let px = clamp(x - w / 2, 2, L.cw - w - 2), py = y - h - 10;
+  if (py < 2) py = y + 12;
+  g.fillStyle = C.fg; g.globalAlpha = 0.92;
+  g.beginPath(); g.roundRect ? g.roundRect(px, py, w, h, 4) : g.rect(px, py, w, h); g.fill();
+  g.globalAlpha = 1; g.fillStyle = C.bg; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText(text, px + w / 2, py + h / 2 + 0.5);
+}
+function drawTrail(g, pts, shift){
+  if (pts.length < 2) return;
+  g.strokeStyle = C.accent; g.globalAlpha = 0.55; g.lineWidth = 3; g.lineJoin = 'round'; g.lineCap = 'round';
+  g.beginPath();
+  pts.forEach((p, i) => {
+    const s = shift ? p.s + 12 : p.s, d = shift ? 12 - p.d : p.d;
+    const prev = pts[i - 1];
+    if (i === 0 || Math.abs(prev.s - p.s) > 5 || Math.abs(prev.d - p.d) > 5) g.moveTo(X(s), Y(d)); else g.lineTo(X(s), Y(d));
+  });
+  g.stroke(); g.globalAlpha = 1;
+}
+function drawFlat(){
+  const g = fctx, { u, sMax, dpr } = L;
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, L.cw, L.h);
+  g.fillStyle = C.domA; g.fillRect(X(0), Y(12), 12 * u, 12 * u);
+  if (state.cover) { g.fillStyle = C.domB; g.fillRect(X(12), Y(12), 12 * u, 12 * u); }
+  g.strokeStyle = C.grid; g.lineWidth = 1;
+  for (let d = 1; d < 12; d++) if (d !== 6) seg(g, X(0), Y(d), X(sMax), Y(d));
+  g.setLineDash([7, 5]); g.strokeStyle = C.blue; g.lineWidth = 2.2; seg(g, X(0), Y(6), X(sMax), Y(6)); g.setLineDash([]);
+  g.strokeStyle = C.red; g.lineWidth = 4; seg(g, X(0), Y(0), X(sMax), Y(0)); seg(g, X(0), Y(12), X(sMax), Y(12));
+  g.strokeStyle = C.fg; g.fillStyle = C.fg; g.lineWidth = 2.5;
+  if (!state.cover) { arrowEdge(g, 0, true); arrowEdge(g, 12, false); }
+  else {
+    arrowEdge(g, 0, true); arrowEdge(g, 24, true);
+    g.setLineDash([4, 5]); g.lineWidth = 1.3; g.strokeStyle = C.muted; seg(g, X(12), Y(0), X(12), Y(12)); g.setLineDash([]);
+  }
+  // axes
+  g.font = `400 13px ${FONT}`; g.fillStyle = C.muted;
+  g.textAlign = 'right'; g.textBaseline = 'middle';
+  for (let d = 0; d <= 12; d += 2) g.fillText(String(d), X(0) - 10, Y(d));
+  g.textAlign = 'left';
+  for (let d = 0; d <= 12; d++) {
+    if (u < 18 && d % 2 && d !== 1 && d !== 11) continue;
+    g.fillStyle = d === 6 ? C.blue : (d === 0 || d === 12) ? C.red : C.muted;
+    g.fillText(IVS[d], X(sMax) + 10, Y(d));
+  }
+  g.fillStyle = C.muted; g.textAlign = 'center'; g.textBaseline = 'top';
+  for (let s = 0; s <= sMax; s += 2) g.fillText(String(s), X(s), Y(0) + 8);
+  if (state.cover) {
+    g.font = `italic 400 13px ${FONT}`;
+    g.fillText('the square', X(6), Y(0) + 26);
+    g.fillText('a second copy: the same chords, flipped', X(18), Y(0) + 26);
+  }
+  // trail
+  drawTrail(g, state.trail, false);
+  if (state.cover) drawTrail(g, state.trail, true);
+  // lattice dots
+  const r = Math.max(2.3, u * 0.11);
+  g.fillStyle = C.dot;
+  for (let s = 0; s < sMax; s++) for (let d = s % 2; d <= 12; d += 2) disc(g, X(s), Y(d), r);
+  // markers
+  const h = reduce(state.x, state.y), marks = [[h.s, h.d]];
+  if (state.cover) marks.push([h.s + 12, 12 - h.d]);
+  else if (h.s < 0.02) marks.push([12, 12 - h.d]);
+  const R = Math.max(7, u * 0.34);
+  marks.forEach(([s, d]) => {
+    g.fillStyle = C.accent; g.strokeStyle = C.panel; g.lineWidth = 2.5;
+    g.beginPath(); g.arc(X(s), Y(d), R, 0, 2 * Math.PI); g.fill(); g.stroke();
+  });
+  // hover label
+  if (state.hover && !drag) pill(g, dotName(state.hover.s, state.hover.d), X(state.hover.s), Y(state.hover.d));
+}
+function evtSD(e){
+  const r = flat.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+  return { s: (px - L.ox) / L.u, d: 12 - (py - L.oy) / L.u, px, py };
+}
+function nearestDot(p){
+  let best = null, bd = 1e9;
+  const s0 = Math.round(p.s), d0 = Math.round(p.d);
+  for (let s = s0 - 1; s <= s0 + 1; s++) {
+    if (s < 0 || s >= L.sMax) continue;
+    for (let d = d0 - 1; d <= d0 + 1; d++) {
+      if (d < 0 || d > 12 || (s + d) % 2) continue;
+      const dist = Math.hypot(s - p.s, d - p.d);
+      if (dist < bd) { bd = dist; best = { s, d }; }
+    }
+  }
+  return bd < 0.55 ? best : null;
+}
+function setFromSD(p){
+  const s = clamp(p.s, 0, L.sMax), d = clamp(p.d, 0, 12);
+  let { x, y } = liftOf(s, d);
+  if (state.snap) { x = Math.round(x); y = Math.round(y); }
+  state.x = x; state.y = y;
+}
+let drag = null;
+flat.addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  stopTour();
+  flat.setPointerCapture(e.pointerId);
+  const p = evtSD(e);
+  drag = { x0: p.px, y0: p.py, moved: false, dot: nearestDot(p) };
+  state.hover = null; state.dirty = true;
+});
+flat.addEventListener('pointermove', e => {
+  const p = evtSD(e);
+  if (!drag) {
+    const inside = p.s >= -0.5 && p.s <= L.sMax + 0.5 && p.d >= -0.5 && p.d <= 12.5;
+    const hv = inside ? nearestDot(p) : null;
+    if ((hv && (!state.hover || hv.s !== state.hover.s || hv.d !== state.hover.d)) || (!hv && state.hover)) { state.hover = hv; state.dirty = true; }
+    return;
+  }
+  if (!drag.moved && Math.hypot(p.px - drag.x0, p.py - drag.y0) > 5) {
+    drag.moved = true; state.trail = [];
+    setFromSD(p); audio.susStart(state.x, state.y);
+  }
+  if (drag.moved) {
+    setFromSD(p); audio.susSet(state.x, state.y);
+    state.trail.push(reduce(state.x, state.y));
+    if (state.trail.length > 600) state.trail.shift();
+    updateReadout(); state.dirty = true;
+  }
+});
+function endDrag(e, cancelled){
+  if (!drag) return;
+  if (drag.moved || cancelled) audio.susStop();
+  else {
+    if (drag.dot) { const l = liftOf(drag.dot.s, drag.dot.d); state.x = l.x; state.y = l.y; }
+    else setFromSD(evtSD(e));
+    state.trail = [];
+    audio.chord(state.x, state.y);
+  }
+  drag = null; updateReadout(); state.dirty = true;
+}
+flat.addEventListener('pointerup', e => endDrag(e, false));
+flat.addEventListener('pointercancel', e => endDrag(e, true));
+flat.addEventListener('pointerleave', () => { if (!drag && state.hover) { state.hover = null; state.dirty = true; } });
+function normalizeRegister(){
+  while (Math.min(state.x, state.y) > 7) { state.x -= 12; state.y -= 12; }
+  while (Math.min(state.x, state.y) < -9) { state.x += 12; state.y += 12; }
+}
+flat.addEventListener('keydown', e => {
+  let x = Math.round(state.x), y = Math.round(state.y);
+  const lo = Math.min(x, y) === x ? 'x' : 'y', hi = lo === 'x' ? 'y' : 'x';
+  const v = { x, y };
+  if (e.key === 'ArrowRight') { v.x++; v.y++; }
+  else if (e.key === 'ArrowLeft') { v.x--; v.y--; }
+  else if (e.key === 'ArrowUp') { v[hi]++; }
+  else if (e.key === 'ArrowDown') { v[hi]--; }
+  else if (e.key === ' ' || e.key === 'Enter') { }
+  else return;
+  e.preventDefault(); stopTour();
+  state.x = v.x; state.y = v.y; normalizeRegister();
+  state.trail = []; audio.chord(state.x, state.y); updateReadout(); state.dirty = true;
+});
+
+/* ---------------- 3D strip ---------------- */
+const strip = el('strip'), sctx = strip.getContext('2d');
+const NS = 96, ND = 12, R3 = 3, HW = 1.15, DIST = 14;
+function emb(s, d){
+  const th = Math.PI * s / 6, t = (d - 6) / 6 * HW, c = Math.cos(th / 2), sn = Math.sin(th / 2), r = R3 + t * c;
+  return [r * Math.cos(th), r * Math.sin(th), t * sn];
+}
+const MESH = [];
+for (let i = 0; i <= NS; i++) { const row = []; for (let j = 0; j <= ND; j++) row.push(emb(i * 12 / NS, j * 12 / ND)); MESH.push(row); }
+const LATTICE = [];
+for (let s = 0; s < 12; s++) for (let d = s % 2; d <= 12; d += 2) LATTICE.push({ s, d, v: emb(s, d) });
+let S3 = { w: 400, h: 400, dpr: 1, dots: [] };
+function sizeStrip(){
+  const w = strip.clientWidth || 400, h = Math.round(Math.min(w * 0.95, Math.max(260, window.innerHeight * 0.62))), dpr = window.devicePixelRatio || 1;
+  strip.style.height = h + 'px'; strip.width = Math.round(w * dpr); strip.height = Math.round(h * dpr);
+  S3 = { w, h, dpr, dots: [] }; state.dirty = true;
+}
+function drawStrip(){
+  const g = sctx, { w, h, dpr } = S3;
+  g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  const cy = Math.cos(state.yaw), sy = Math.sin(state.yaw), cp = Math.cos(state.pitch), sp = Math.sin(state.pitch);
+  const k = Math.min(w, h) / (2 * (R3 + HW)) * 0.8;
+  const P = v => {
+    const x1 = v[0] * cy - v[1] * sy, y1 = v[0] * sy + v[1] * cy, z1 = v[2];
+    const y2 = y1 * cp - z1 * sp, z2 = y1 * sp + z1 * cp, sc = DIST / (DIST + y2);
+    return { X: w / 2 + x1 * sc * k, Y: h / 2 - z2 * sc * k, z: y2, sc, rx: x1, ry: y2, rz: z2 };
+  };
+  const PV = MESH.map(row => row.map(P));
+  const items = [];
+  let Lx = -0.35, Ly = -0.75, Lz = 0.56; const ln = Math.hypot(Lx, Ly, Lz); Lx /= ln; Ly /= ln; Lz /= ln;
+  const [sr, sg, sb] = C.surfRGB;
+  for (let i = 0; i < NS; i++) for (let j = 0; j < ND; j++) {
+    const a = PV[i][j], b = PV[i + 1][j], c = PV[i + 1][j + 1], d = PV[i][j + 1];
+    const e1 = [b.rx - a.rx, b.ry - a.ry, b.rz - a.rz], e2 = [d.rx - a.rx, d.ry - a.ry, d.rz - a.rz];
+    let nx = e1[1] * e2[2] - e1[2] * e2[1], ny = e1[2] * e2[0] - e1[0] * e2[2], nz = e1[0] * e2[1] - e1[1] * e2[0];
+    const nn = Math.hypot(nx, ny, nz) || 1;
+    const sh = 0.5 + 0.5 * Math.abs((nx * Lx + ny * Ly + nz * Lz) / nn);
+    const col = `rgb(${Math.round(sr * sh)},${Math.round(sg * sh)},${Math.round(sb * sh)})`;
+    items.push({ z: (a.z + b.z + c.z + d.z) / 4, kind: 0, pts: [a, b, c, d], col });
+  }
+  for (let i = 0; i < NS; i++) {
+    items.push({ z: (PV[i][0].z + PV[i + 1][0].z) / 2 - 0.22, kind: 1, a: PV[i][0], b: PV[i + 1][0], col: C.red, lw: 3.5 });
+    items.push({ z: (PV[i][ND].z + PV[i + 1][ND].z) / 2 - 0.22, kind: 1, a: PV[i][ND], b: PV[i + 1][ND], col: C.red, lw: 3.5 });
+    if (i % 2 === 0) items.push({ z: (PV[i][ND / 2].z + PV[i + 1][ND / 2].z) / 2 - 0.22, kind: 1, a: PV[i][ND / 2], b: PV[i + 1][ND / 2], col: C.blue, lw: 2.2 });
+  }
+  for (let i = 0; i < NS; i += NS / 12) for (let j = 0; j < ND; j++) {
+    const A = PV[i][j], B = PV[i][j + 1];
+    items.push({ z: (A.z + B.z) / 2 - 0.2, kind: 1, a: A, b: B, col: C.fg, lw: 1, alpha: 0.18 });
+  }
+  const tr = state.trail;
+  for (let i = 1; i < tr.length; i++) {
+    const va = emb(tr[i - 1].s, tr[i - 1].d), vb = emb(tr[i].s, tr[i].d);
+    if (Math.hypot(va[0] - vb[0], va[1] - vb[1], va[2] - vb[2]) > 1.5) continue;
+    const a = P(va), b = P(vb);
+    items.push({ z: (a.z + b.z) / 2 - 0.26, kind: 1, a, b, col: C.accent, lw: 3, alpha: 0.6 });
+  }
+  const dots = [];
+  LATTICE.forEach(L0 => { const p = P(L0.v); dots.push({ ...p, s: L0.s, d: L0.d }); items.push({ z: p.z - 0.25, kind: 2, p }); });
+  S3.dots = dots;
+  const hm = reduce(state.x, state.y), mp = P(emb(hm.s, hm.d));
+  items.push({ z: mp.z - 0.3, kind: 3, p: mp });
+  items.sort((A, B) => B.z - A.z);
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  for (const it of items) {
+    if (it.kind === 0) {
+      g.fillStyle = it.col; g.strokeStyle = it.col; g.lineWidth = 0.8;
+      g.beginPath(); g.moveTo(it.pts[0].X, it.pts[0].Y); for (let q = 1; q < 4; q++) g.lineTo(it.pts[q].X, it.pts[q].Y); g.closePath(); g.fill(); g.stroke();
+    } else if (it.kind === 1) {
+      g.strokeStyle = it.col; g.lineWidth = it.lw * (it.a.sc + it.b.sc) / 2; g.globalAlpha = it.alpha || 1;
+      seg(g, it.a.X, it.a.Y, it.b.X, it.b.Y); g.globalAlpha = 1;
+    } else if (it.kind === 2) {
+      g.fillStyle = C.fg; g.globalAlpha = 0.55; disc(g, it.p.X, it.p.Y, 2.6 * it.p.sc); g.globalAlpha = 1;
+    } else {
+      g.fillStyle = C.accent; g.strokeStyle = C.panel; g.lineWidth = 2.5;
+      g.beginPath(); g.arc(it.p.X, it.p.Y, 9 * it.p.sc, 0, 2 * Math.PI); g.fill(); g.stroke();
+    }
+  }
+}
+let rot = null;
+strip.addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  strip.setPointerCapture(e.pointerId);
+  rot = { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, moved: false };
+});
+strip.addEventListener('pointermove', e => {
+  if (!rot) return;
+  const dx = e.clientX - rot.x, dy = e.clientY - rot.y;
+  if (!rot.moved && Math.hypot(e.clientX - rot.x0, e.clientY - rot.y0) > 4) rot.moved = true;
+  if (rot.moved) {
+    state.yaw -= dx * 0.008; state.pitch = clamp(state.pitch + dy * 0.006, 0.12, 1.5);
+    rot.x = e.clientX; rot.y = e.clientY; state.dirty = true;
+  }
+});
+function endRot(e){
+  if (!rot) return;
+  if (!rot.moved) {
+    const r = strip.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+    let best = null;
+    for (const dt of S3.dots) {
+      if (Math.hypot(dt.X - px, dt.Y - py) < 15 && (!best || dt.z < best.z)) best = dt;
+    }
+    if (best) {
+      stopTour();
+      const l = liftOf(best.s, best.d); state.x = l.x; state.y = l.y; state.trail = [];
+      audio.chord(state.x, state.y); updateReadout(); state.dirty = true;
+    }
+  }
+  state.pauseSpinUntil = performance.now() + 3500;
+  rot = null;
+}
+strip.addEventListener('pointerup', endRot);
+strip.addEventListener('pointercancel', () => { rot = null; });
+
+/* ---------------- tours ---------------- */
+const TOURS = {
+  around: {
+    start: { x: 0, y: 4 }, steps: 12, step: p => ({ x: p.x + 1, y: p.y + 1 }),
+    caption(k){
+      if (k === 0) return 'C–E, a major third. Now move both notes up a semitone, over and over.';
+      if (k < 4) return 'Each step slides the dot to the right, at the same height: the interval doesn’t change.';
+      if (k === 4) return 'E–G♯ runs off the right edge and comes back on the left, flipped. In the square it now reads as G♯ up to E: a minor sixth.';
+      if (k < 10) return 'Still the same major third you started with, but the square sees it upside down.';
+      if (k === 10) return 'Across the glued edge a second time, and flipped back. A major third again.';
+      if (k < 12) return 'Almost home.';
+      return 'C–E again, an octave up. A path parallel to the middle of the strip goes around twice before it closes. That’s the twist.';
+    }
+  },
+  mirror: {
+    start: { x: -1, y: 7 }, steps: 8, step: p => ({ x: p.x + 1, y: p.y - 1 }),
+    caption(k){
+      if (k === 0) return 'B–G. The bottom note will climb while the top note falls.';
+      if (k < 4) return 'The notes squeeze together, so the dot drops straight down.';
+      if (k === 4) return 'D♯ and D♯: the voices meet on the red edge, the unisons.';
+      if (k < 8) return 'They pass through each other, and the dot bounces back up. The edge behaves like a mirror.';
+      return 'You hear exactly what you started with. The voices traded jobs, and the map can’t tell the difference.';
+    }
+  },
+  tritone: {
+    start: { x: 0, y: 6 }, steps: 6, step: p => ({ x: p.x + 1, y: p.y + 1 }),
+    caption(k){
+      if (k === 0) return 'C–F♯, a tritone, on the blue line through the middle.';
+      if (k < 3) return 'Move both notes up a semitone.';
+      if (k === 3) return 'D♯–A crosses the glued edge. The flip sends the middle line to itself.';
+      if (k < 6) return 'Still on the middle line.';
+      return 'F♯–C is the chord you started with. The middle circle closes after one trip across: there are only six tritones.';
+    }
+  }
+};
+const tourButtons = [...document.querySelectorAll('[data-tour]')];
+const DEFAULT_CAPTION = el('caption').textContent;
+function setCaption(t){ el('caption').textContent = t; }
+function startTour(key){
+  stopTour(true);
+  audio.init();
+  const T = TOURS[key], pts = [T.start];
+  for (let i = 0; i < T.steps; i++) pts.push(T.step(pts[pts.length - 1]));
+  state.x = pts[0].x; state.y = pts[0].y; state.trail = [reduce(state.x, state.y)];
+  audio.chord(state.x, state.y); updateReadout(); setCaption(T.caption(0));
+  state.tour = { key, T, pts, k: 0, t0: performance.now() + (state.arp ? 1300 : 650), struck: false };
+  tourButtons.forEach(b => b.classList.toggle('active', b.dataset.tour === key));
+  state.dirty = true;
+}
+function stopTour(keepCaption){
+  if (!state.tour) return;
+  state.tour = null;
+  tourButtons.forEach(b => b.classList.remove('active'));
+  if (!keepCaption) setCaption(DEFAULT_CAPTION);
+}
+function stepTour(now){
+  const tr = state.tour; if (!tr) return;
+  const GLIDE = 260, STEP = state.arp ? 2000 : 950;
+  const el_ = now - tr.t0; if (el_ < 0) return;
+  const A = tr.pts[tr.k], B = tr.pts[tr.k + 1];
+  if (el_ < GLIDE) {
+    const f = el_ / GLIDE, e = f * f * (3 - 2 * f);
+    state.x = A.x + (B.x - A.x) * e; state.y = A.y + (B.y - A.y) * e;
+    state.trail.push(reduce(state.x, state.y)); state.dirty = true;
+  } else if (!tr.struck) {
+    tr.struck = true; state.x = B.x; state.y = B.y;
+    state.trail.push(reduce(state.x, state.y));
+    audio.chord(state.x, state.y); updateReadout(); setCaption(tr.T.caption(tr.k + 1)); state.dirty = true;
+  } else if (el_ >= STEP) {
+    tr.k++; tr.t0 = now; tr.struck = false;
+    if (tr.k >= tr.pts.length - 1) { state.tour = null; tourButtons.forEach(b => b.classList.remove('active')); }
+  }
+}
+tourButtons.forEach(b => b.addEventListener('click', () => startTour(b.dataset.tour)));
+el('stop').addEventListener('click', () => { stopTour(); audio.susStop(); });
+
+/* ---------------- options ---------------- */
+el('cover').addEventListener('click', e => {
+  state.cover = !state.cover; e.currentTarget.setAttribute('aria-pressed', String(state.cover));
+  e.currentTarget.textContent = state.cover ? 'Show just the square' : 'Show a second copy of the square';
+  sizeFlat();
+});
+el('snap').addEventListener('change', e => { state.snap = e.target.checked; });
+el('arp').addEventListener('change', e => { state.arp = e.target.checked; });
+const spinBox = el('spin'); spinBox.checked = state.spin;
+spinBox.addEventListener('change', e => { state.spin = e.target.checked; });
+el('vol').addEventListener('input', e => { state.vol = +e.target.value; audio.setVol(state.vol); });
+
+/* ---------------- loop ---------------- */
+function frame(now){
+  stepTour(now);
+  if (state.spin && !rot && now > state.pauseSpinUntil) { state.yaw += 0.0032; state.dirty = true; }
+  if (state.dirty) { drawFlat(); drawStrip(); state.dirty = false; }
+  requestAnimationFrame(frame);
+}
+const ro = new ResizeObserver(() => { sizeFlat(); sizeStrip(); });
+ro.observe(flat.parentElement); ro.observe(strip.parentElement);
+window.addEventListener('resize', () => { sizeFlat(); sizeStrip(); });
+sizeFlat(); sizeStrip(); updateReadout();
+if (document.fonts) document.fonts.ready.then(() => { state.dirty = true; });
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
